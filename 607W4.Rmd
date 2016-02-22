@@ -1,0 +1,90 @@
+---
+title: "Data 607 Week 4 Homework"
+author: "Armenoush Aslanian-Persico"
+output:
+  html_document:
+    highlight: tango
+    theme: cerulean
+  pdf_document: default
+---
+
+---
+### Automated Data Collection in R, Chapter 8, Problems 3, 7, 8, 9.
+
+### Load Packages
+```{r}
+library(stringr)
+library(XML)
+library(RCurl)
+```
+
+### #3
+#### Print names in the correct order: Title, First, Last.
+Split names by comma, flip, combine.
+```{r}
+name<- c(
+  "Moe Szyslak",
+  "Burns, C. Montgomery",
+  "Rev. Timothy Lovejoy",
+  "Ned Flanders",
+  "Simpson, Homer",
+  "Dr. Julius Hibbert")
+
+hascomma<-str_detect(name,",")
+hascomma
+
+splitname<-str_split(name,",")
+splitname
+
+flipname<-sapply(splitname,rev)
+flipname
+
+goodname<-str_c(flipname,sep=" ")
+goodname
+# Needs work.
+```
+
+#### Determine if the name has a title. 
+Look for 2 or more letters followed by a period.
+```{r}
+hastitle<-str_detect(name,"[[:alpha:]]{2,}\\.")
+hastitle
+```
+
+#### Determine if the name has two first names.
+Look for 1 uppercase letter followed by a period.
+```{r}
+multiplenames<-str_detect(name,"[[:upper:]]{1}\\.")
+multiplenames
+# This would not detect first names without a period.
+```
+
+### #7
+#### Extract first html tag only.
+The original expression failed because it was extracting the longest matching result. To get the desired result, we can extract the tag with only letter (alpha) characters.
+```{r}
+astring<-c("<title>++BREAKING NEWS+++</title>")
+firsttag<-str_extract(astring,"<[[:alpha:]]+>")
+firsttag
+```
+
+### #8
+#### Extract binomial formula.
+The original expression failed because it did not capture the carat or minus sign.
+```{r}
+bstring<-c("(5-3)^2=5^2-2*5*3+3^2 conforms to the binomial theorem")
+bformula<-str_extract(bstring,"[0-9=+*()+\\^\\-]+")
+bformula
+```
+
+### #9
+#### Extract secret message.
+```{r}
+secretmessage <- c("clcopCow1zmstc0d87wnkig7OvdicpNuggvhryn92Gjuwczi8hqrfpRxs5Aj5dwpn0TanwoUwisdij7Lj8kpf03AT5Idr3coc0bt7yczjatOaootj55t3Nj3ne6c4Sfek.r1w1YwwojigOd6vrfUrbz2.2bkAnbhzgv4R9i05zEcrop.wAgnb.SqoU65fPa1otfb7wEm24k6t3sR9zqe5fy89n6Nd5t9kc4fE905gmc4Rgxo5nhDk!gr")
+decode<-unlist(str_extract_all(secretmessage,"[[:upper:]]|\\."))
+combined<-str_c(decode,sep="",collapse ="")
+answer<-gsub("\\."," ",combined)
+cat(answer)
+justforme<-(str_c(answer, " ARMENOUSH"))
+cat(justforme)
+```
